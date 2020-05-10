@@ -8,26 +8,61 @@ namespace FootyStatsAPIConsole
     {
         public static FootyStatsTypes.League[] GetLeagues(string apiKey)
         {
-            RestAPIGetter Request = new RestAPIGetter(String.Format("https://api.footystats.org/league-list?key={0}", apiKey));
-            string response = Request.GetResponse();
-            FootyStatsTypes.GetLeagueListResponseContainer responseContainer = new FootyStatsTypes.GetLeagueListResponseContainer(response);
+            FootyStatsTypes.GetLeagueListResponseContainer responseContainer = new FootyStatsTypes.GetLeagueListResponseContainer();
             return responseContainer.LeagueListResponseObject.data;
         }
 
-        public static FootyStatsTypes.Match[] GetMatches(string apiKey, int leagueId)
+        public static FootyStatsTypes.Match[] GetMatches(string apiKey, int seasonId)
         {
-            RestAPIGetter Request = new RestAPIGetter(String.Format("https://api.footystats.org/league-matches?key={0}&season_id={1}", apiKey, leagueId));
-            string response = Request.GetResponse();
-            FootyStatsTypes.GetLeagueMatchesResponseContainer responseContainer = new FootyStatsTypes.GetLeagueMatchesResponseContainer(response);
+            FootyStatsTypes.GetLeagueMatchesResponseContainer responseContainer = new FootyStatsTypes.GetLeagueMatchesResponseContainer(seasonId);
             return responseContainer.LeagueMatchesResponseObject.data;
         }
 
         public static FootyStatsTypes.MatchDetails GetMatchDetails(string apiKey, int matchId)
         {
-            RestAPIGetter Request = new RestAPIGetter(String.Format("https://api.footystats.org/match?key={0}&match_id={1}", apiKey, matchId));
-            string response = Request.GetResponse();
-            FootyStatsTypes.GetLeagueMatchDetailsResponseContainer responseContainer = new FootyStatsTypes.GetLeagueMatchDetailsResponseContainer(response);
+            FootyStatsTypes.GetLeagueMatchDetailsResponseContainer responseContainer = new FootyStatsTypes.GetLeagueMatchDetailsResponseContainer(matchId);
             return responseContainer.LeagueMatchDetailsResponseObject.data;
         }
+
+        public static FootyStatsTypes.PlayerDetails[] GetLeaguePlayers(string apiKey, int seasonId)
+        {
+            FootyStatsTypes.GetLeaguePlayersResponseContainer responseContainer = new FootyStatsTypes.GetLeaguePlayersResponseContainer(seasonId);
+            return responseContainer.data;
+        }
+
+        public static Dictionary<int, FootyStatsTypes.PlayerDetails> GetLeaguePlayersIndexById(string apiKey, int seasonId)
+        {
+            FootyStatsTypes.GetLeaguePlayersResponseContainer responseContainer = new FootyStatsTypes.GetLeaguePlayersResponseContainer(seasonId);
+            return PlayerDetailsIndexedById(responseContainer.data);
+        }
+
+        public static Dictionary<int, FootyStatsTypes.TeamDetails> GetLeagueTeamsIndexById(string apiKey, int seasonId)
+        {
+            FootyStatsTypes.GetLeagueTeamsResponseContainer responseContainer = new FootyStatsTypes.GetLeagueTeamsResponseContainer(seasonId);
+            return TeamDetailsIndexedById(responseContainer.data);
+        }
+
+        private static Dictionary<int, FootyStatsTypes.PlayerDetails> PlayerDetailsIndexedById(FootyStatsTypes.PlayerDetails[] playerDetails)
+        {
+
+            var dictionary = new Dictionary<int, FootyStatsTypes.PlayerDetails>();
+            for (int i = 0; i < playerDetails.Length; i++)
+            {
+                dictionary.Add(playerDetails[i].id, playerDetails[i]);
+            }
+            return dictionary;
+        }
+
+        private static Dictionary<int, FootyStatsTypes.TeamDetails> TeamDetailsIndexedById(FootyStatsTypes.TeamDetails[] teamDetails)
+        {
+
+            var dictionary = new Dictionary<int, FootyStatsTypes.TeamDetails>();
+            for (int i = 0; i < teamDetails.Length; i++)
+            {
+                dictionary.Add(teamDetails[i].id, teamDetails[i]);
+            }
+            return dictionary;
+        }
+
     }
 }
